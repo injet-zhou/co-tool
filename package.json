@@ -1,0 +1,32 @@
+{
+  "name": "co-tool",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.1.0",
+    "axios": "^1.1.2",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.27.0",
+    "@tauri-apps/cli": "^1.1.0",
+    "@types/node": "^18.7.10",
+    "@vitejs/plugin-vue": "^3.0.1",
+    "eslint": "^8.25.0",
+    "naive-ui": "^2.33.4",
+    "typescript": "^4.6.4",
+    "unplugin-icons": "^0.14.11",
+    "unplugin-vue-components": "^0.22.8",
+    "vite": "^3.0.2",
+    "vue-tsc": "^0.40.0"
+  }
+}
