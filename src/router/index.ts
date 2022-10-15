@@ -7,6 +7,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: () => import('~/views/home/HomePage.vue'),
+    meta: {
+      title: '首页',
+    },
+    children: [
+      {
+        path: '/data-gen/single',
+        name: 'DataGenSingle',
+        component: () => import('~/views/data-gen/SingleData.vue'),
+      },
+    ],
   },
 ]
 

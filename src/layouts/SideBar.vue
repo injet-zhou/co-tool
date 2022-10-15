@@ -4,7 +4,7 @@ import { h, ref } from 'vue'
 import type { MenuOption } from 'naive-ui'
 import { NIcon } from 'naive-ui'
 import { RouterLink } from 'vue-router'
-import { Database20Regular, DataPie20Regular } from '@vicons/fluent'
+import { DataPie20Regular, DataUsageEdit20Regular, Database20Regular } from '@vicons/fluent'
 
 const renderIcon = (icon: Component) => {
   return () => h(NIcon, null, { default: () => h(icon) })
@@ -39,10 +39,7 @@ const menuOptions: MenuOption[] = [
     key: 'data-generator',
     icon: renderIcon(DataPie20Regular),
     children: [
-      {
-        label: '单个数据',
-        key: 'single-data',
-      },
+      routerMenuItem('DataGenSingle', '单个数据', DataUsageEdit20Regular),
       {
         label: '批量生成',
         key: 'batch-data',
