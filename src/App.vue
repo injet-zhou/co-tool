@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="container" />
+  <router-view></router-view>
 </template>
 
 <style scoped>
