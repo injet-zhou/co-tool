@@ -21,6 +21,8 @@ declare module '@vue/runtime-core' {
     NSpace: typeof import('naive-ui')['NSpace']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShowOrCheck: typeof import('./src/components/input/ShowOrCheck.vue')['default']
     ShowOrEdit: typeof import('./src/components/input/ShowOrEdit.vue')['default']
+    ShowOrSelect: typeof import('./src/components/input/ShowOrSelect.vue')['default']
   }
 }
