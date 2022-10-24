@@ -14,6 +14,7 @@ export default defineConfig({
     AutoImport({
       imports: [
         'vue',
+        'vue-router',
         {
           'naive-ui': [
             'useDialog',
@@ -23,6 +24,16 @@ export default defineConfig({
           ],
         },
       ],
+      dirs: [
+        'src/store',
+      ],
+      vueTemplate: true,
+      include: [
+        /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
+        /\.vue$/, /\.vue\?vue/, // .vue
+        /\.md$/, // .md
+      ],
+      dts: './auto-imports.d.ts',
     }),
     Components({ resolvers: [NaiveUiResolver()] }),
   ],
@@ -48,7 +59,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '~': resolve(__dirname, './src'),
+      '@': resolve(__dirname, './src'),
     },
   },
 })

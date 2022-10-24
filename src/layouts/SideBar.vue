@@ -51,10 +51,7 @@ const menuOptions: MenuOption[] = [
     key: 'database',
     icon: renderIcon(Database20Regular),
     children: [
-      {
-        label: '建表（旧）',
-        key: 'build-table-old',
-      },
+      routerMenuItem('TableBuild', '建表（旧）')
     ],
   },
   {
