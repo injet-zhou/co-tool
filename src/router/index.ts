@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
         path: '/database/table-build',
         name: 'TableBuild',
         component: () => import('@/views/database/TableBuild.vue'),
-      }
+      },
     ],
   },
 ]

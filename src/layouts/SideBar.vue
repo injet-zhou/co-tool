@@ -51,7 +51,7 @@ const menuOptions: MenuOption[] = [
     key: 'database',
     icon: renderIcon(Database20Regular),
     children: [
-      routerMenuItem('TableBuild', '建表（旧）')
+      routerMenuItem('TableBuild', '建表（旧）'),
     ],
   },
   {
