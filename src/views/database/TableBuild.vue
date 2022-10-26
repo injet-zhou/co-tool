@@ -46,7 +46,7 @@
         :placeholder="'结果（下划线）'"
         type="textarea"
       ></n-input>
-      <n-button @click="translate" strong secondary type="primary"
+      <n-button @click="translateVar" strong secondary type="primary"
         >翻译</n-button
       >
     </n-space>
@@ -61,7 +61,7 @@ import ShowOrEdit from "@/components/input/ShowOrEdit.vue";
 import ShowOrNumberInput from "@/components/input/ShowOrNumberInput.vue";
 import ShowOrSelect from "@/components/input/ShowOrSelect.vue";
 import { SQLSERVER_FIELD_TYPES } from "./types";
-import { zh2en, en2zh } from "@/utils/translate";
+import { translate } from "@/utils/translate";
 import {
   words2CamelCase,
   words2SnakeCase,
@@ -102,13 +102,12 @@ const databaseName = ref("");
 const dbType = ref(DBType.MSSQL);
 const sql = ref("");
 
-const translate = async () => {
-  let res: any;
-  if (varTrans.from === ZH && varTrans.to === EN) {
-    res = await zh2en(varTrans.text);
-  } else if (varTrans.from === EN && varTrans.to === ZH) {
-    res = await en2zh(varTrans.text);
-  }
+const translateVar = async () => {
+  const res = await translate({
+    text: varTrans.text,
+    from: varTrans.from,
+    to: varTrans.to,
+  });
   if (res && res.length === 1) {
     const [result] = res as string[];
     camelCaseRes.value = sentence2CamelCase(result);
