@@ -1,9 +1,14 @@
 <script setup lang="ts">
-
+import hljs from 'highlight.js/lib/core';
+import sql from 'highlight.js/lib/languages/sql';
+hljs.registerLanguage('sql', sql);
 </script>
 
 <template>
-  <router-view />
+  <n-config-provider :hljs="hljs">
+    <router-view />
+  </n-config-provider>
+  
 </template>
 
 <style scoped>

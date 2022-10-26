@@ -2,7 +2,15 @@
   <n-space>
     <n-button @click="newRow" strong secondary type="primary">添加</n-button>
     <n-button strong secondary type="error">删除</n-button>
-    <n-button strong secondary type="primary">生成SQL</n-button>
+    <n-button @click="buildTable" strong secondary type="primary"
+      >生成SQL</n-button
+    >
+    <n-select v-model:value="dbType" :options="databaseOptions" />
+    <n-input
+      :placeholder="'请输入数据库名'"
+      v-model:value="databaseName"
+    ></n-input>
+    <n-input :placeholder="'请输入表名'" v-model:value="tableName"></n-input>
   </n-space>
   <n-data-table
     :key="rowKey"
@@ -43,6 +51,7 @@
       >
     </n-space>
   </n-card>
+  <n-code :code="sql" language="sql" />
 </template>
 
 <script setup lang="ts">
@@ -60,6 +69,8 @@ import {
   sentence2SnakeCase,
 } from "@/utils/string";
 import { NButton, NSpace } from "naive-ui";
+import { ColumnDef, DBType, TableBuildSchema } from "@/types/db";
+import { buildSchema } from "@/api/db";
 
 const rowKey = (row: any) => {
   return row.key;
@@ -79,8 +90,17 @@ const varTrans = reactive({
   from: ZH,
 });
 
+const databaseOptions = [
+  { label: "Mysql", value: DBType.MYSQL },
+  { label: "SqlServer", value: DBType.MSSQL },
+];
+
 const camelCaseRes = ref("");
 const snakeCaseRes = ref("");
+const tableName = ref("");
+const databaseName = ref("");
+const dbType = ref(DBType.MSSQL);
+const sql = ref("");
 
 const translate = async () => {
   let res: any;
@@ -116,7 +136,33 @@ const buildOptions = (options: string[]): SelectOption[] => {
 
 const fieldTypes = buildOptions(SQLSERVER_FIELD_TYPES);
 
-const data: Array<any> = reactive([]);
+const data: Array<Record<string, string | boolean | number>> = reactive([]);
+
+const buildTable = async () => {
+  const schema: TableBuildSchema = {
+    database: databaseName.value,
+    tableName: tableName.value,
+    columns: data.map((item) => {
+      const col = {
+        name: item.name,
+        type: item.type,
+        length: item.length,
+        nullable: item.isNull,
+        isPrimaryKey: item.isPrimaryKey,
+        defaultValue: item.defaultValue,
+        comment: item.comment,
+      } as ColumnDef;
+      return col;
+    }),
+    options: {
+      type: dbType.value,
+    },
+  };
+  const res = await buildSchema(schema);
+  if (res.code === 200) {
+    sql.value = res.data as string;
+  }
+};
 
 const strCol = ({
   title,
@@ -134,7 +180,7 @@ const strCol = ({
     render(row: any, index: number) {
       return h(ShowOrEdit, {
         value: row[key],
-        onUpdateValue(v: any) {
+        onUpdateValue(v: string) {
           data[index][key] = v;
         },
       });
@@ -159,7 +205,7 @@ const boolCol = ({
       return h(ShowOrCheck, {
         value: row[key],
         type: "bool",
-        onUpdateValue(v: any) {
+        onUpdateValue(v: boolean) {
           data[index][key] = v;
         },
       });
@@ -184,7 +230,7 @@ const numCol = ({
       return h(ShowOrNumberInput, {
         value: row[key],
         type: "number",
-        onUpdateValue(v: any) {
+        onUpdateValue(v: number | string) {
           data[index][key] = v;
         },
         min: 0,
@@ -213,7 +259,7 @@ const selectCol = ({
     render(row: any, index: number) {
       return h(ShowOrSelect, {
         value: row[key],
-        onUpdateValue(v: any) {
+        onUpdateValue(v: string) {
           data[index][key] = v;
         },
         options,
@@ -230,7 +276,7 @@ const newRow = () => {
     name: "",
     type: "",
     length: 0,
-    nullable: false,
+    nullable: true,
     comment: "",
     defaultValue: "",
     isPrimaryKey: false,

@@ -31,3 +31,7 @@ export const words2CamelCase = (words: string[] = []) => {
 export const words2SnakeCase = (words: string[] = []) => {
   return words.map((word) => word.toLowerCase()).join("_");
 };
+
+export const isChinese = (str = "") => {
+  return /[\u4e00-\u9fa5]/.test(str);
+};
