@@ -16,6 +16,7 @@ export enum DBType {
 export interface TableOptions {
   autoIncrement?: boolean;
   type: DBType;
+  isDefaultID?: boolean;
 }
 
 export interface TableBuildSchema {

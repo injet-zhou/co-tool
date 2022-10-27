@@ -1,16 +1,30 @@
 <template>
   <n-space>
+    <n-button @click="loadData" strong secondary type="primary"
+      >从缓存恢复</n-button
+    >
     <n-button @click="newRow" strong secondary type="primary">添加</n-button>
     <n-button strong secondary type="error">删除</n-button>
     <n-button @click="buildTable" strong secondary type="primary"
       >生成SQL</n-button
+    >
+    <n-button @click="copyCode" strong secondary type="primary"
+      >复制代码</n-button
     >
     <n-select v-model:value="dbType" :options="databaseOptions" />
     <n-input
       :placeholder="'请输入数据库名'"
       v-model:value="databaseName"
     ></n-input>
-    <n-input :placeholder="'请输入表名'" v-model:value="tableName"></n-input>
+    <n-input :placeholder="'请输入表名'" v-model:value="tableName" @change="tableNameChange" :status="tableNameStatus"></n-input>
+    <n-switch v-model:value="autoIncrement">
+      <template #checked> ID自增 </template>
+      <template #unchecked> ID非自增 </template>
+    </n-switch>
+    <n-switch v-model:value="isDefaultID">
+      <template #checked> 默认ID </template>
+      <template #unchecked> 自定义ID </template>
+    </n-switch>
   </n-space>
   <n-data-table
     :key="rowKey"
@@ -56,6 +70,7 @@
 
 <script setup lang="ts">
 import { ArrowSwap20Regular } from "@vicons/fluent";
+import { useClipboard } from '@vueuse/core'
 import ShowOrCheck from "@/components/input/ShowOrCheck.vue";
 import ShowOrEdit from "@/components/input/ShowOrEdit.vue";
 import ShowOrNumberInput from "@/components/input/ShowOrNumberInput.vue";
@@ -75,6 +90,7 @@ import { buildSchema } from "@/api/db";
 const rowKey = (row: any) => {
   return row.key;
 };
+const {message} = createDiscreteApi(['message'])
 
 const EN = "en";
 const ZH = "zh";
@@ -101,6 +117,11 @@ const tableName = ref("");
 const databaseName = ref("");
 const dbType = ref(DBType.MSSQL);
 const sql = ref("");
+const autoIncrement = ref(false);
+const isDefaultID = ref(true);
+const tableNameStatus = ref('')
+
+const {copy} = useClipboard({ source: sql })
 
 const translateVar = async () => {
   const res = await translate({
@@ -137,7 +158,40 @@ const fieldTypes = buildOptions(SQLSERVER_FIELD_TYPES);
 
 const data: Array<Record<string, string | boolean | number>> = reactive([]);
 
+const saveData = () => {
+  if (!data.length) {
+    return;
+  }
+  localStorage.setItem("table_build_data", JSON.stringify(data));
+};
+
+// load data from local storage
+const loadData = () => {
+  const dataStr = localStorage.getItem("table_build_data");
+  if (dataStr) {
+    data.length = 0;
+    data.push(...JSON.parse(dataStr));
+  }
+};
+
+const tableNameChange = (val: string) => {
+  if (!val) {
+    tableNameStatus.value = 'error'
+    return
+  }
+  tableNameStatus.value = ''
+}
+
+const copyCode = () => {
+  copy()
+  message.success('复制成功')
+}
+
 const buildTable = async () => {
+  if (!tableName.value) {
+    tableNameStatus.value = 'error'
+    return
+  }
   const schema: TableBuildSchema = {
     database: databaseName.value,
     tableName: tableName.value,
@@ -155,6 +209,8 @@ const buildTable = async () => {
     }),
     options: {
       type: dbType.value,
+      autoIncrement: autoIncrement.value,
+      isDefaultID: isDefaultID.value,
     },
   };
   const res = await buildSchema(schema);
@@ -273,8 +329,8 @@ const newRow = () => {
   data.push({
     key: data.length,
     name: "",
-    type: "",
-    length: 0,
+    type: "varchar",
+    length: 50,
     nullable: true,
     comment: "",
     defaultValue: "",
@@ -330,4 +386,13 @@ const columns = [
     },
   },
 ];
+
+let interval: NodeJS.Timeout;
+
+onMounted(() => {
+  interval = setInterval(saveData, 5000);
+});
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>

@@ -55,8 +55,8 @@ const menuOptions: MenuOption[] = [
     ],
   },
   {
-    label: '舞，舞，舞',
-    key: 'dance-dance-dance',
+    label: '临时',
+    key: 'tmp',
   },
 ]
 
