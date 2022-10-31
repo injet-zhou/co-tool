@@ -25,6 +25,7 @@
       <template #checked> 默认ID </template>
       <template #unchecked> 自定义ID </template>
     </n-switch>
+    <n-button @click="clearItv" strong secondary type="primary">清除Interval</n-button>
   </n-space>
   <n-data-table
     :key="rowKey"
@@ -75,7 +76,7 @@ import ShowOrCheck from "@/components/input/ShowOrCheck.vue";
 import ShowOrEdit from "@/components/input/ShowOrEdit.vue";
 import ShowOrNumberInput from "@/components/input/ShowOrNumberInput.vue";
 import ShowOrSelect from "@/components/input/ShowOrSelect.vue";
-import { SQLSERVER_FIELD_TYPES } from "./types";
+import { SQLSERVER_FIELD_TYPES, sqlServerFieldType2KnexType } from "./types";
 import { translate } from "@/utils/translate";
 import {
   words2CamelCase,
@@ -198,7 +199,7 @@ const buildTable = async () => {
     columns: data.map((item) => {
       const col = {
         name: item.name,
-        type: item.type,
+        type: sqlServerFieldType2KnexType(item.type as string),
         length: item.length,
         nullable: item.isNull,
         isPrimaryKey: item.isPrimaryKey,
@@ -389,10 +390,9 @@ const columns = [
 
 let interval: NodeJS.Timeout;
 
-onMounted(() => {
-  interval = setInterval(saveData, 5000);
-});
-onUnmounted(() => {
+interval = setInterval(saveData, 5000);
+
+const clearItv = () => {
   clearInterval(interval);
-});
+};
 </script>
