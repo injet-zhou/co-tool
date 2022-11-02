@@ -201,7 +201,7 @@ const buildTable = async () => {
         name: item.name,
         type: sqlServerFieldType2KnexType(item.type as string),
         length: item.length,
-        nullable: item.isNull,
+        nullable: item.nullable,
         isPrimaryKey: item.isPrimaryKey,
         defaultValue: item.defaultValue,
         comment: item.comment,
